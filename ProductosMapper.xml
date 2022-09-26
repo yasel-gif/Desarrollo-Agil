@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cursoDAgil.bd.mappers.ProductosMapper">
+	<resultMap id="ProductosResultMap"
+		type="cursoDAgil.bd.domain.Productos">
+		<id column="idProducto" property="idProducto" jdbcType="INTEGER" />
+		<result column="nombre" property="nombre" jdbcType="VARCHAR" />
+		<result column="precio" property="precio" jdbcType="DOUBLE" />
+		<result column="precioVta" property="precioVta"			jdbcType="DOUBLE" />
+		<result column="cantidad" property="cantidad"			jdbcType="INTEGER" />
+		<result column="marcaId" property="marcaId" jdbcType="INTEGER" />
+		<association property="marcas" column="marcaId" resultMap="MarcasResultMap" />
+
+	</resultMap>
+
+	<resultMap id="MarcasResultMap"
+		type="cursoDAgil.bd.domain.Marcas">
+		<id column="idMarca" property="idMarca" jdbcType="INTEGER" />
+		<result column="nombreMarca" property="nombreMarca" jdbcType="VARCHAR" />
+		
+	</resultMap>
+	
+	<select id="obtenerProductos" resultMap="ProductosResultMap">
+		SELECT * FROM
+		
+		 equipo7.PRODUCTOS pro
+		INNER JOIN marcas AS mar ON
+		pro.marcaId = mar.idMarca
+	</select>
+
+	<delete id="eliminarProductos" parameterType="hashMap">
+		DELETE FROM PRODUCTOS WHERE idProducto = #{idProducto};
+	</delete>
+	<insert id="nuevoProductos"
+		parameterType="cursoDAgil.bd.domain.Productos" useGeneratedKeys="true"
+		keyProperty="idProductos">
+		INSERT INTO productos(nombre, precio, precioVta, cantidad,
+		marcaId)
+		VALUES (#{nombre},#{precio}, #{precioVta}, #{cantidad},
+		#{marcas.idMarca} )
+	</insert>
+	<select id="obtenerProductosPorId" resultMap="ProductosResultMap"
+		parameterType="hashMap">
+		SELECT
+		pro.idProducto,
+		pro.nombre,
+		pro.precio,
+		pro.precioVta,
+		pro.cantidad,
+		pro.marcaId
+		FROM
+		equipo7.PRODUCTOS pro
+		WHERE
+		idProducto = #{idProducto}
+	</select>
+	<update id="actualizarProductos"
+		parameterType="cursoDAgil.bd.domain.Productos">
+		UPDATE productos
+		SET nombre= #{nombre}, precio=#{precio}, precioVta=#{precioVta}, cantidad=#{cantidad}, marcaId=#{marcas.idMarca}
+		WHERE
+		idProducto = #{idProducto}
+	</update>
+	
+</mapper> 

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cursoDAgil.bd.mappers.GananciasMapper">
+	<resultMap id="GananciasResultMap"
+		type="cursoDAgil.bd.domain.Ganancias">
+		<id column="idGanancia" property="idGanancia" jdbcType="INTEGER" />
+		<result column="ventaId" property="ventaId" jdbcType="INTEGER" />
+		<result column="totalGanancia" property="totalGanancia"
+			jdbcType="DOUBLE" />
+		<result column="fecha" property="fecha" jdbcType="DATE" />
+		<association property="ventas" column="ventaId" resultMap="VentasResultMap" />
+
+
+	</resultMap>
+	<resultMap id="VentasResultMap"
+		type="cursoDAgil.bd.domain.Ventas">
+		<id column="idVenta" property="idVenta" jdbcType="INTEGER" />
+		<result column="clienteId" property="clienteId"	jdbcType="INTEGER" />
+		<result column="totalVenta" property="totalVenta" jdbcType="DOUBLE" />
+		<result column="fecha" property="fecha" jdbcType="DATE" />
+	</resultMap>
+	<select id="obtenerGanancias" resultMap="GananciasResultMap">
+		SELECT * FROM
+		equipo7.GANANCIAS gan
+		INNER JOIN ventas AS ven ON
+		gan.ventaId = ven.idVenta
+	</select>
+
+
+	<insert id="nuevaGanancias"
+		parameterType="cursoDAgil.bd.domain.Ganancias" useGeneratedKeys="true"
+		keyProperty="idGanancia">
+		INSERT INTO ganancias(ventaId, totalGanancia, fecha)
+		VALUES (#{ventas.idVenta},#{totalGanancia}, #{fecha})
+	</insert>
+	<select id="obtenerGananciasPorId" resultMap="GananciasResultMap"
+		parameterType="hashMap">
+		SELECT
+		gan.idGanancia,
+		gan.ventaId,
+		gan.totalGanancia,
+		gan.fecha
+
+		FROM
+		equipo7.GANANCIAS gan
+		WHERE
+		idGanancia = #{idGanancia}
+	</select>
+	<select id="obtenerGananciasPorFecha" resultMap="GananciasResultMap"
+		parameterType="hashMap">
+		SELECT
+		gan.idGanancia,
+		gan.ventaId,
+		gan.totalGanancia,
+		gan.fecha
+
+		FROM
+		equipo7.GANANCIAS gan
+		WHERE
+		fecha = #{fecha}
+	</select>
+	<update id="actualizarGanancias"
+		parameterType="cursoDAgil.bd.domain.Ganancias">
+		UPDATE ganancias
+		SET ventaId= #{ventas.idVenta}, totalGanancia
+		=#{totalGanancia}, fecha=#{fecha}
+		WHERE idGanancia = #{idGanancia}
+	</update>
+	<delete id="eliminarGanancias" parameterType="hashMap">
+		DELETE FROM GANANCIAS WHERE idGanancia = #{idGanancia};
+	</delete>
+
+</mapper>

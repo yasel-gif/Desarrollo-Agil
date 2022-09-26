@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cursoDAgil.bd.mappers.DetalleVentasMapper">
+	<resultMap id="DetalleVentasResultMap"
+		type="cursoDAgil.bd.domain.DetalleVentas">
+		<id column="ventaId" property="ventaId" jdbcType="INTEGER" />
+		<result column="productoId" property="productoId" jdbcType="INTEGER" />
+		<result column="cantidad" property="cantidad" jdbcType="INTEGER" />
+		
+	</resultMap>
+	
+	<resultMap id="ResultDetallesVentas"	type="cursoDAgil.bd.domain.DetalleVentas">
+		<result column="ventaId" property="ventaId" jdbcType="INTEGER" />
+		<result column="productoId" jdbcType="INTEGER" property="productoId" />
+		<result column="cantidad" jdbcType="INTEGER"			property="cantidad" />
+		<association property="ventas"  column="ventaId" resultMap="VentasResultMap" />
+		<association property="productos" column="productoId"			resultMap="ProductosResultMap" />
+
+	</resultMap>
+	<resultMap id="VentasResultMap" 		type="cursoDAgil.bd.domain.Ventas">
+		<id column="idVenta" property="idVenta" jdbcType="INTEGER" />
+		<result column="clienteId" property="clienteId" jdbcType="INTEGER" />
+		<result column="totalVenta" property="totalVenta" jdbcType="DOUBLE" />
+		<result column="fecha" property="fecha" jdbcType="DATE" />
+	</resultMap>
+	
+	<resultMap id="ProductosResultMap" 	type="cursoDAgil.bd.domain.Productos">
+		<id column="idProducto" property="idProducto" jdbcType="INTEGER" />
+		<result column="nombre" property="nombre" jdbcType="VARCHAR" />
+		<result column="precio" property="precio" jdbcType="DOUBLE" />
+		<result column="precioVta" property="precioVta"		jdbcType="DOUBLE" />
+		<result column="cantidad" property="cantidad"	jdbcType="INTEGER" />
+		<result column="marcaId" property="marcaId" jdbcType="INTEGER" />
+		<association property="marcas" column="marcaId"			resultMap="MarcasResultMap" />
+	</resultMap>
+	<resultMap id="MarcasResultMap"		type="cursoDAgil.bd.domain.Marcas">
+		<id column="idMarca" property="idMarca" jdbcType="INTEGER" />
+		<result column="nombreMarca" property="nombreMarca" jdbcType="VARCHAR" />
+		
+	</resultMap>
+	<select id="obtenerDetalleVentas" resultMap="ResultDetallesVentas">
+		SELECT * FROM
+		
+		equipo7.DETALLEVENTAS dv
+		INNER JOIN ventas AS v ON dv.ventaId =	v.idVenta
+		INNER JOIN productos as p ON dv.productoId= p.idProducto
+		INNER JOIN marcas AS m ON m.idMarca = p.marcaId
+	</select>
+	
+	
+	<insert id="nuevaDetalleVentas"
+		parameterType="cursoDAgil.bd.domain.DetalleVentas" >
+		INSERT INTO detalleventas(ventaId, productoId, cantidad)
+		VALUES (#{ventaId},#{productoId}, #{cantidad})
+	</insert>
+	<select id="obtenerDetalleVentasPorId" resultMap="DetalleVentasResultMap"
+		parameterType="hashMap">
+		SELECT
+		
+		ven.ventaId,
+		ven.productoId,
+		ven.cantidad
+		
+		FROM
+		equipo7.DETALLEVENTAS ven
+		WHERE
+		ventaId = #{ventaId}
+	</select>
+	<update id="actualizarDetalleVentas"
+		parameterType="cursoDAgil.bd.domain.DetalleVentas">
+		UPDATE detalleVentas
+		SET ventaId= #{ventaId}, productoId=#{productoId}, cantidad=#{cantidad}
+		WHERE ventaId = #{ventaId} AND productoId=#{productoId}
+	</update>
+	<delete id="eliminarDetalleVentas" parameterType="hashMap">
+		DELETE FROM DETALLEVENTAS WHERE ventaId = #{ventaId};
+	</delete>
+
+</mapper>
